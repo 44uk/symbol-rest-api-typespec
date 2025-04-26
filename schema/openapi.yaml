@@ -1,0 +1,1787 @@
+openapi: 3.0.0
+info:
+  title: Catapult REST Endpoints
+  version: 1.0.4
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description: OpenAPI Specification of catapult-rest
+tags:
+  - name: accounts
+  - name: blocks
+  - name: chain
+  - name: finalization
+  - name: network
+  - name: node
+paths:
+  /accounts:
+    get:
+      operationId: AccountRoutes_searchAccounts
+      summary: Search accounts
+      description: Gets an array of accounts.
+      parameters:
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+          explode: false
+        - name: pageNumber
+          in: query
+          required: false
+          schema:
+            type: integer
+          explode: false
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: order
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Order'
+          explode: false
+        - name: orderBy
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/AccountOrderByEnum'
+          explode: false
+        - name: mosaicId
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountPage'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+      tags:
+        - accounts
+    post:
+      operationId: AccountRoutes_getAccountsInfo
+      summary: Get accounts information
+      description: Returns the account information for an array of accounts.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountInfoDTO'
+        '400':
+          description: The server could not understand the request due to invalid syntax.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+      tags:
+        - accounts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+  /accounts/{accountId}:
+    get:
+      operationId: AccountRoutes_getAccountInfo
+      summary: Get account information
+      description: Returns the account information.
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountInfoDTO'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+      tags:
+        - accounts
+  /accounts/{accountId}/merkle:
+    get:
+      operationId: AccountRoutes_getAccountInfoMerkle
+      summary: Get account merkle information
+      description: Returns the account merkle information.
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerkleStateInfoDTO'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+      tags:
+        - accounts
+  /blocks:
+    get:
+      operationId: BlockRoutes_searchBlocks
+      summary: Search blocks
+      description: Gets an array of blocks.
+      parameters:
+        - name: signerPublicKey
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: beneficiaryAddress
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+          explode: false
+        - name: pageNumber
+          in: query
+          required: false
+          schema:
+            type: integer
+          explode: false
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: order
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/Order'
+          explode: false
+        - name: orderBy
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/BlockOrderByEnum'
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockPage'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+      tags:
+        - blocks
+  /blocks/{height}:
+    get:
+      operationId: BlockRoutes_getBlockByHeight
+      summary: Get block information
+      description: Gets a block from the chain that has the given height.
+      parameters:
+        - name: height
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlockInfoDTO'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+      tags:
+        - blocks
+  /blocks/{height}/statements/{hash}/merkle:
+    get:
+      operationId: BlockRoutes_getMerkleReceipts
+      summary: Get the merkle path for a given a receipt statement hash and block
+      description: |2-
+          Returns the merkle path for a receipt statement or resolution linked to a block.
+          The merkle path is the minimum number of nodes needed to calculate the merkle root.
+
+          Steps to calculate the merkle root:
+          1. proofHash = hash (leaf).
+          2. Concatenate proofHash with the first unprocessed item from the merklePath list as follows:
+          * a) If item.position == left -> proofHash = sha_256(item.hash + proofHash).
+          * b) If item.position == right -> proofHash = sha_256(proofHash+ item.hash).
+          3. Repeat 2. for every item in the merklePath list.
+          4. Compare if the calculated proofHash equals the one recorded in the
+          block header (block.receiptsHash) to verify if the statement was linked with the block.
+      parameters:
+        - name: height
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: hash
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerkleProofInfoDTO'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+      tags:
+        - blocks
+  /blocks/{height}/transactions/{hash}/merkle:
+    get:
+      operationId: BlockRoutes_getMerkleTransaction
+      summary: Get the merkle path for a given a transaction and block
+      description: |2-
+          Returns the merkle path for a transaction included in a block.
+          The merkle path is the minimum number of nodes needed to calculate the merkle root.
+
+          Steps to calculate the merkle root:
+          1. proofHash = hash (leaf).
+          2. Concatenate proofHash with the first unprocessed item from the merklePath list as follows:
+          * a) If item.position == left -> proofHash = sha_256(item.hash + proofHash).
+          * b) If item.position == right -> proofHash = sha_256(proofHash+ item.hash).
+          3. Repeat 2. for every item in the merklePath list.
+          4. Compare if the calculated proofHash equals the one recorded in the
+          block header (block.transactionsHash) to verify if the transaction was included in the block.
+      parameters:
+        - name: height
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: hash
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MerkleProofInfoDTO'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+      tags:
+        - blocks
+  /chain/info:
+    get:
+      operationId: ChainRoutes_getChainInfo
+      summary: Get the current information of the chain
+      description: |2-
+          Returns the current information of the blockchain.
+
+          The higher the score, the better the chain.
+          During synchronization, nodes try to get the best blockchain in the network.
+
+          The score for a block is derived from its difficulty and the time (in seconds) that has elapsed since the last block:
+
+          block score = difficulty − time elapsed since last block
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChainInfoDTO'
+      tags:
+        - chain
+  /finalization/proof/epoch/{epoch}:
+    get:
+      operationId: FinalizationRoutes_getFinalizationProofAtEpoch
+      summary: Get finalization proof
+      description: Gets finalization proof for the greatest height associated with the given epoch.
+      parameters:
+        - name: epoch
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/FinalizationEpoch'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinalizationProofDTO'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+      tags:
+        - finalization
+  /finalization/proof/height/{height}:
+    get:
+      operationId: FinalizationRoutes_getFinalizationProofAtHeight
+      summary: Get finalization proof
+      description: Gets finalization proof at the given height.
+      parameters:
+        - name: height
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FinalizationProofDTO'
+        '404':
+          description: The server cannot find the requested resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+      tags:
+        - finalization
+  /network:
+    get:
+      operationId: NetworkRoutes_getNetworkType
+      summary: Get the current network type of the chain
+      description: Returns the current network type.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkTypeDTO'
+      tags:
+        - network
+  /network/fees/rental:
+    get:
+      operationId: NetworkRoutes_getRentalFees
+      summary: Get rental fees information
+      description: |2-
+          Returns the estimated effective rental fees for namespaces and mosaics.
+          This endpoint is only available if the REST instance has access to catapult-server ``resources/config-network.properties`` file.
+          To activate this feature, add the setting "network.propertiesFilePath" in the configuration file (rest/resources/rest.json).
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RentalFeesDTO'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+      tags:
+        - network
+  /network/fees/transaction:
+    get:
+      operationId: NetworkRoutes_getTransactionFees
+      summary: Get transaction fees information
+      description: |2-
+          Returns the average, median, highest and lower fee multiplier over the last "numBlocksTransactionFeeStats".
+          The setting "numBlocksTransactionFeeStats" is adjustable via the configuration file (rest/resources/rest.json) per REST instance.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionFeesDTO'
+      tags:
+        - network
+  /network/properties:
+    get:
+      operationId: NetworkRoutes_getNetworkProperties
+      summary: Get the network properties
+      description: |2-
+          Returns the content from a catapult-server network configuration file (resources/config-network.properties).
+          To enable this feature, the REST setting "network.propertiesFilePath" must define where the file is located.
+          This is adjustable via the configuration file (rest/resources/rest.json) per REST instance.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkConfigurationDTO'
+        '409':
+          description: The request conflicts with the current state of the server.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelError'
+      tags:
+        - network
+  /node/health:
+    get:
+      operationId: NodeRoutes_getNodeHealth
+      summary: Get the node health information
+      description: Supplies information regarding the connection and services status.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeHealthInfoDTO'
+        '503':
+          description: Service unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeHealthInfoDTO'
+      tags:
+        - node
+  /node/info:
+    get:
+      operationId: NodeRoutes_getNodeInfo
+      summary: Get the node information
+      description: Supplies additional information about the application running on a node.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeInfoDTO'
+      tags:
+        - node
+  /node/peers:
+    get:
+      operationId: NodeRoutes_getNodePeers
+      summary: Get peers information
+      description: Gets the list of peers visible by the node.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NodeInfoDTO'
+      tags:
+        - node
+  /node/server:
+    get:
+      operationId: NodeRoutes_getServerInfo
+      summary: Get the version of the running REST component
+      description: Returns the version of the running catapult-rest component.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerInfoDTO'
+      tags:
+        - node
+  /node/storage:
+    get:
+      operationId: NodeRoutes_getNodeStorage
+      summary: Get the storage information of the node
+      description: Returns storage information about the node.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageInfoDTO'
+      tags:
+        - node
+  /node/time:
+    get:
+      operationId: NodeRoutes_getNodeTime
+      summary: Get the node time
+      description: Gets the node time at the moment the reply was sent and received.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NodeTimeDTO'
+      tags:
+        - node
+  /node/unlockedaccount:
+    get:
+      operationId: NodeRoutes_getUnlockedAccount
+      summary: Get the unlocked harvesting account public keys
+      description: Returns array of unlocked account public keys.
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnlockedAccountDTO'
+      tags:
+        - node
+components:
+  schemas:
+    AccountDTO:
+      type: object
+      required:
+        - version
+        - address
+        - addressHeight
+        - publicKey
+        - publicKeyHeight
+        - accountType
+        - supplementalPublicKeys
+        - activityBuckets
+        - mosaics
+        - importance
+        - importanceHeight
+      properties:
+        version:
+          $ref: '#/components/schemas/StateVersion'
+        address:
+          $ref: '#/components/schemas/Address'
+        addressHeight:
+          $ref: '#/components/schemas/Height'
+        publicKey:
+          $ref: '#/components/schemas/PublicKey'
+        publicKeyHeight:
+          $ref: '#/components/schemas/Height'
+        accountType:
+          $ref: '#/components/schemas/AccountTypeEnum'
+        supplementalPublicKeys:
+          $ref: '#/components/schemas/SupplementalPublicKeysDTO'
+        activityBuckets:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActivityBucketDTO'
+        mosaics:
+          type: array
+          items:
+            $ref: '#/components/schemas/Mosaic'
+          description: Mosaic units owned.
+        importance:
+          $ref: '#/components/schemas/Importance'
+        importanceHeight:
+          $ref: '#/components/schemas/Height'
+    AccountInfoDTO:
+      type: object
+      required:
+        - id
+        - account
+      properties:
+        id:
+          type: string
+          description: Internal resource identifier.
+        account:
+          $ref: '#/components/schemas/AccountDTO'
+    AccountLinkNetworkPropertiesDTO:
+      type: object
+      properties:
+        dummy:
+          type: string
+    AccountLinkPublicKeyDTO:
+      type: object
+      required:
+        - publicKey
+      properties:
+        publicKey:
+          type: string
+    AccountLinkVotingKeyDTO:
+      type: object
+      required:
+        - publicKey
+        - startEpoch
+        - endEpoch
+      properties:
+        publicKey:
+          type: string
+        startEpoch:
+          $ref: '#/components/schemas/FinalizationEpoch'
+        endEpoch:
+          $ref: '#/components/schemas/FinalizationEpoch'
+    AccountLinkVotingKeysDTO:
+      type: object
+      required:
+        - publicKeys
+      properties:
+        publicKeys:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountLinkVotingKeyDTO'
+    AccountOrderByEnum:
+      type: string
+      enum:
+        - id
+        - balance
+    AccountPage:
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountInfoDTO'
+          description: Array of accounts.
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    AccountRestrictionNetworkPropertiesDTO:
+      type: object
+      required:
+        - maxAccountRestrictionValues
+      properties:
+        maxAccountRestrictionValues:
+          type: string
+    AccountTypeEnum:
+      type: number
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+      description: |-
+        * 0 - Unlinked.
+        * 1 - Balance-holding account that is linked to a remote harvester account.
+        * 2 - Remote harvester account that is linked to a balance-holding account.
+        * 3 - Remote harvester eligible account that is unlinked.
+    ActivityBucketDTO:
+      type: object
+      required:
+        - startHeight
+        - totalFeesPaid
+        - beneficiaryCount
+        - rawScore
+      properties:
+        startHeight:
+          $ref: '#/components/schemas/Height'
+        totalFeesPaid:
+          allOf:
+            - $ref: '#/components/schemas/Amount'
+          description: Fees paid by the account for this bucket.
+        beneficiaryCount:
+          allOf:
+            - $ref: '#/components/schemas/UInt32'
+          description: Number of times the account has been a beneficiary for this bucket.
+        rawScore:
+          allOf:
+            - $ref: '#/components/schemas/Importance'
+          description: Importance score for this bucket. This is taken into account to calculate the latest account importance.
+      description: |-
+        Supplementary data stored for importance recalculation.
+        At each importance recalculation, existing buckets are shifted, the working bucket is finalized and a new working bucket is created.
+        Each bucket influences at most five importance recalculations.
+    Address:
+      type: string
+      description: Address encoded using a 32-character set.
+    AggregateNetworkPropertiesDTO:
+      type: object
+      required:
+        - maxTransactionsPerAggregate
+        - maxCosignaturesPerAggregate
+        - enableStrictCosignatureCheck
+        - enableBondedAggregateSupport
+        - maxBondedTransactionLifetime
+      properties:
+        maxTransactionsPerAggregate:
+          type: string
+        maxCosignaturesPerAggregate:
+          type: string
+        enableStrictCosignatureCheck:
+          type: boolean
+        enableBondedAggregateSupport:
+          type: boolean
+        maxBondedTransactionLifetime:
+          type: string
+    Amount:
+      type: string
+      description: Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
+    BlockDTO:
+      type: object
+      required:
+        - size
+        - signature
+        - signerPublicKey
+        - version
+        - network
+        - type
+        - height
+        - timestamp
+        - difficulty
+        - feeMultiplier
+        - previousBlockHash
+        - transactionsHash
+        - receiptsHash
+        - stateHash
+        - beneficiaryAddress
+        - proofGamma
+        - proofVerificationHash
+        - proofScalar
+      properties:
+        size:
+          type: integer
+          description: The Size of the block in bytes.
+        signature:
+          allOf:
+            - $ref: '#/components/schemas/Signature'
+          description: Block signature.
+        signerPublicKey:
+          allOf:
+            - $ref: '#/components/schemas/PublicKey'
+          description: Public key of the account that harvested the block.
+        version:
+          type: integer
+          description: Version of the block.
+        network:
+          type: integer
+          description: Network type.
+        type:
+          type: integer
+          description: Type of block.
+        height:
+          allOf:
+            - $ref: '#/components/schemas/Height'
+          description: Height of the blockchain when this block was added.
+        timestamp:
+          allOf:
+            - $ref: '#/components/schemas/Timestamp'
+          description: Number of milliseconds elapsed since the creation of the nemesis block.
+        difficulty:
+          allOf:
+            - $ref: '#/components/schemas/Difficulty'
+          description: Difficulty of the block.
+        feeMultiplier:
+          allOf:
+            - $ref: '#/components/schemas/BlockFeeMultiplier'
+          description: Fee multiplier applied to the block.
+        previousBlockHash:
+          allOf:
+            - $ref: '#/components/schemas/Hash256'
+          description: Hash of the previous block.
+        transactionsHash:
+          allOf:
+            - $ref: '#/components/schemas/Hash256'
+          description: Hash of the block transactions.
+        receiptsHash:
+          allOf:
+            - $ref: '#/components/schemas/Hash256'
+          description: Hash of the block receipts.
+        stateHash:
+          allOf:
+            - $ref: '#/components/schemas/Hash256'
+          description: Hash of the block state.
+        beneficiaryAddress:
+          allOf:
+            - $ref: '#/components/schemas/Address'
+          description: Address of the account that will receive part of the harvested fee.
+        proofGamma:
+          allOf:
+            - $ref: '#/components/schemas/ProofGamma'
+          description: Block proof gamma.
+        proofVerificationHash:
+          allOf:
+            - $ref: '#/components/schemas/ProofVerificationHash'
+          description: Block proof verification hash.
+        proofScalar:
+          allOf:
+            - $ref: '#/components/schemas/ProofScalar'
+          description: Block proof scalar.
+    BlockFeeMultiplier:
+      type: integer
+      format: int64
+      description: Fee multiplier applied to transactions contained in block.
+    BlockInfoDTO:
+      type: object
+      required:
+        - id
+        - meta
+        - block
+      properties:
+        id:
+          type: string
+          description: Internal resource identifier.
+        meta:
+          allOf:
+            - $ref: '#/components/schemas/BlockMetaDTO'
+          description: The block meta data.
+        block:
+          allOf:
+            - $ref: '#/components/schemas/BlockDTO'
+          description: The block data.
+    BlockMetaDTO:
+      type: object
+      required:
+        - hash
+        - totalFee
+        - generationHash
+        - statementsCount
+        - transactionsCount
+        - totalTransactionsCount
+      properties:
+        hash:
+          allOf:
+            - $ref: '#/components/schemas/Hash256'
+          description: Hash of the block.
+        totalFee:
+          allOf:
+            - $ref: '#/components/schemas/Amount'
+          description: Total fee paid to the network to execute the transactions included in the block.
+        generationHash:
+          allOf:
+            - $ref: '#/components/schemas/Hash256'
+          description: Generation hash of the block.
+        statementsCount:
+          type: integer
+          description: Number of statements included in the block.
+        transactionsCount:
+          type: integer
+          description: Number of transactions included in the block.
+        totalTransactionsCount:
+          type: integer
+          description: Total amount of tokens created from the start of the network.
+    BlockOrderByEnum:
+      type: string
+      enum:
+        - id
+        - height
+    BlockPage:
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlockInfoDTO'
+          description: Array of blocks.
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    BmTreeSignature:
+      type: object
+      required:
+        - root
+        - bottom
+      properties:
+        root:
+          allOf:
+            - $ref: '#/components/schemas/ParentPublicKeySignaturePair'
+          description: Root of the signature.
+        bottom:
+          allOf:
+            - $ref: '#/components/schemas/ParentPublicKeySignaturePair'
+          description: Bottom of the signature.
+    ChainInfoDTO:
+      type: object
+      required:
+        - height
+        - scoreHigh
+        - scoreLow
+        - latestFinalizedBlock
+      properties:
+        height:
+          allOf:
+            - $ref: '#/components/schemas/Height'
+          description: Height of the blockchain.
+        scoreHigh:
+          type: string
+          description: Score of the blockchain. During synchronization nodes try to get the blockchain with highest score in the network.
+        scoreLow:
+          type: string
+        latestFinalizedBlock:
+          allOf:
+            - $ref: '#/components/schemas/FinalizationProofDTO'
+          description: Finalization epoch.
+    ChainPropertiesDTO:
+      type: object
+      required:
+        - enableVerifiableState
+        - enableVerifiableReceipts
+        - currencyMosaicId
+        - harvestingMosaicId
+        - blockGenerationTargetTime
+        - blockTimeSmoothingFactor
+        - blockFinalizationInterval
+        - importanceGrouping
+        - importanceActivityPercentage
+        - maxRollbackBlocks
+        - maxDifficultyBlocks
+        - defaultDynamicFeeMultiplier
+        - maxTransactionLifetime
+        - maxBlockFutureTime
+        - initialCurrencyAtomicUnits
+        - maxMosaicAtomicUnits
+        - totalChainImportance
+        - minHarvesterBalance
+        - maxHarvesterBalance
+        - minVoterBalance
+        - maxVotingKeysPerAccount
+        - minVotingKeyLifetime
+        - maxVotingKeyLifetime
+        - harvestBeneficiaryPercentage
+        - harvestNetworkPercentage
+        - harvestNetworkFeeSinkAddress
+        - blockPruneInterval
+        - maxTransactionsPerBlock
+      properties:
+        enableVerifiableState:
+          type: boolean
+        enableVerifiableReceipts:
+          type: boolean
+        currencyMosaicId:
+          type: string
+        harvestingMosaicId:
+          type: string
+        blockGenerationTargetTime:
+          type: string
+        blockTimeSmoothingFactor:
+          type: string
+        blockFinalizationInterval:
+          type: string
+        importanceGrouping:
+          type: string
+        importanceActivityPercentage:
+          type: string
+        maxRollbackBlocks:
+          type: string
+        maxDifficultyBlocks:
+          type: string
+        defaultDynamicFeeMultiplier:
+          type: string
+        maxTransactionLifetime:
+          type: string
+        maxBlockFutureTime:
+          type: string
+        initialCurrencyAtomicUnits:
+          type: string
+        maxMosaicAtomicUnits:
+          type: string
+        totalChainImportance:
+          type: string
+        minHarvesterBalance:
+          type: string
+        maxHarvesterBalance:
+          type: string
+        minVoterBalance:
+          type: string
+        maxVotingKeysPerAccount:
+          type: string
+        minVotingKeyLifetime:
+          type: string
+        maxVotingKeyLifetime:
+          type: string
+        harvestBeneficiaryPercentage:
+          type: string
+        harvestNetworkPercentage:
+          type: string
+        harvestNetworkFeeSinkAddress:
+          type: string
+        blockPruneInterval:
+          type: string
+        maxTransactionsPerBlock:
+          type: string
+    CommunicationTimestampsDTO:
+      type: object
+      required:
+        - sendTimestamp
+        - receiveTimestamp
+      properties:
+        sendTimestamp:
+          allOf:
+            - $ref: '#/components/schemas/Timestamp'
+          description: Number of seconds elapsed since the creation of the nemesis block.
+        receiveTimestamp:
+          allOf:
+            - $ref: '#/components/schemas/Timestamp'
+          description: Number of seconds elapsed since the creation of the nemesis block.
+    Difficulty:
+      type: string
+      description: Determines how hard is to harvest a new block, based on previous blocks.
+    FinalizationEpoch:
+      type: integer
+      format: int64
+      description: Finalization Epoch
+    FinalizationPoint:
+      type: integer
+      format: int64
+      description: Finalization point
+    FinalizationProofDTO:
+      type: object
+      required:
+        - version
+        - finalizationEpoch
+        - finalizationPoint
+        - height
+        - hash
+        - messageGroups
+      properties:
+        version:
+          type: integer
+          description: Finalization version.
+        finalizationEpoch:
+          allOf:
+            - $ref: '#/components/schemas/FinalizationEpoch'
+          description: Finalization epoch.
+        finalizationPoint:
+          allOf:
+            - $ref: '#/components/schemas/FinalizationPoint'
+          description: Finalization point.
+        height:
+          allOf:
+            - $ref: '#/components/schemas/Height'
+          description: Height of the blockchain.
+        hash:
+          type: string
+          description: Hash.
+        messageGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/MessageGroup'
+          description: Array of vote messages.
+    Hash256:
+      type: string
+      format: hex
+    HashLockNetworkPropertiesDTO:
+      type: object
+      required:
+        - lockedFundsPerAggregate
+        - maxHashLockDuration
+      properties:
+        lockedFundsPerAggregate:
+          type: string
+        maxHashLockDuration:
+          type: string
+    Height:
+      type: string
+      description: Height of the blockchain.
+    Importance:
+      type: string
+      description: Importance score.
+    MerklePathItemDTO:
+      type: object
+      required:
+        - position
+        - hash
+      properties:
+        position:
+          allOf:
+            - $ref: '#/components/schemas/PositionEnum'
+          description: Position relative to the proofHash being evaluated.
+        hash:
+          allOf:
+            - $ref: '#/components/schemas/Hash256'
+          description: Hash of the node.
+    MerkleProofInfoDTO:
+      type: object
+      required:
+        - merklePath
+      properties:
+        merklePath:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerklePathItemDTO'
+          description: Merkle path.
+    MerkleStateInfoDTO:
+      type: object
+      required:
+        - raw
+        - tree
+      properties:
+        raw:
+          $ref: '#/components/schemas/MerkleTreeRaw'
+        tree:
+          type: array
+          items:
+            anyOf:
+              - $ref: '#/components/schemas/MerkleTreeBranchDTO'
+              - $ref: '#/components/schemas/MerkleTreeLeafDTO'
+          description: Merkle tree parsed from merkle tree raw.
+      description: The merkle path information clients can use to proof the state of the given entity.
+    MerkleTreeBranchDTO:
+      type: object
+      required:
+        - type
+        - path
+        - encodedPath
+        - nibbleCount
+        - linkMask
+        - links
+        - branchHash
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/MerkleTreeNodeTypeEnum'
+          description: Merkle tree node type.
+        path:
+          type: string
+          description: Branch link path.
+        encodedPath:
+          type: string
+          description: Encoded branch link path.
+        nibbleCount:
+          type: integer
+          description: Nibble count.
+        linkMask:
+          type: string
+          description: Branch link bitmask.
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/MerkleTreeBranchLinkDTO'
+          description: Branch links (max 16).
+        branchHash:
+          allOf:
+            - $ref: '#/components/schemas/Hash256'
+          description: Hash of the branch node.
+      description: Merkle tree branch node.
+    MerkleTreeBranchLinkDTO:
+      type: object
+      required:
+        - bit
+        - link
+      properties:
+        bit:
+          type: string
+          description: Branch link nibble bit index (hexadecimal).
+        link:
+          allOf:
+            - $ref: '#/components/schemas/Hash256'
+          description: Branch link hash.
+      description: Merkle tree branch link.
+    MerkleTreeLeafDTO:
+      type: object
+      required:
+        - type
+        - path
+        - encodedPath
+        - nibbleCount
+        - value
+        - leafHash
+      properties:
+        type:
+          allOf:
+            - $ref: '#/components/schemas/MerkleTreeNodeTypeEnum'
+          description: Merkle tree node type.
+        path:
+          type: string
+          description: Leaf path.
+        encodedPath:
+          type: string
+          description: Encoded leaf path.
+        nibbleCount:
+          type: integer
+          description: Nibble count.
+        value:
+          type: string
+          description: Leaf value (sha256 hash).
+        leafHash:
+          allOf:
+            - $ref: '#/components/schemas/Hash256'
+          description: Hash of the leaf node.
+      description: Merkle tree leaf node.
+    MerkleTreeNodeTypeEnum:
+      type: number
+      enum:
+        - 0
+        - 255
+      description: |-
+        Type of Merkle tree node:
+        * 0 - Branch node.
+        * 255 - Leaf node.
+    MerkleTreeRaw:
+      type: string
+      format: hex
+      description: |-
+        The hex information of the complete merkle tree as returned by server api.
+        More information can be found in chapter 4.3 of the catapult whitepaper.
+    MessageGroup:
+      type: object
+      required:
+        - stage
+        - height
+        - hashes
+        - signatures
+      properties:
+        stage:
+          type: integer
+          description: Stage of the message group.
+        height:
+          allOf:
+            - $ref: '#/components/schemas/Height'
+          description: Height of the blockchain.
+        hashes:
+          type: array
+          items:
+            type: string
+          description: Hash.
+        signatures:
+          type: array
+          items:
+            $ref: '#/components/schemas/BmTreeSignature'
+          description: Array of signatures.
+    MetadataNetworkPropertiesDTO:
+      type: object
+      required:
+        - maxValueSize
+      properties:
+        maxValueSize:
+          type: string
+    ModelError:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+    Mosaic:
+      type: object
+      required:
+        - id
+        - amount
+      properties:
+        id:
+          $ref: '#/components/schemas/MosaicId'
+        amount:
+          $ref: '#/components/schemas/Amount'
+    MosaicId:
+      type: string
+      format: hex
+      description: Mosaic identifier.
+    MosaicNetworkPropertiesDTO:
+      type: object
+      required:
+        - maxMosaicsPerAccount
+        - maxMosaicDuration
+        - maxMosaicDivisibility
+        - mosaicRentalFeeSinkAddress
+        - mosaicRentalFee
+      properties:
+        maxMosaicsPerAccount:
+          type: string
+        maxMosaicDuration:
+          type: string
+        maxMosaicDivisibility:
+          type: string
+        mosaicRentalFeeSinkAddress:
+          type: string
+        mosaicRentalFee:
+          type: string
+    MosaicRestrictionNetworkPropertiesDTO:
+      type: object
+      required:
+        - maxMosaicRestrictionValues
+      properties:
+        maxMosaicRestrictionValues:
+          type: string
+    MultisigNetworkPropertiesDTO:
+      type: object
+      required:
+        - maxMultisigDepth
+        - maxCosignatoriesPerAccount
+        - maxCosignedAccountsPerAccount
+      properties:
+        maxMultisigDepth:
+          type: string
+        maxCosignatoriesPerAccount:
+          type: string
+        maxCosignedAccountsPerAccount:
+          type: string
+    NamespaceNetworkPropertiesDTO:
+      type: object
+      required:
+        - maxNameSize
+        - maxChildNamespaces
+        - maxNamespaceDepth
+        - minNamespaceDuration
+        - maxNamespaceDuration
+        - namespaceGracePeriodDuration
+        - reservedRootNamespaceNames
+        - namespaceRentalFeeSinkAddress
+        - rootNamespaceRentalFeePerBlock
+        - childNamespaceRentalFee
+      properties:
+        maxNameSize:
+          type: string
+        maxChildNamespaces:
+          type: string
+        maxNamespaceDepth:
+          type: string
+        minNamespaceDuration:
+          type: string
+        maxNamespaceDuration:
+          type: string
+        namespaceGracePeriodDuration:
+          type: string
+        reservedRootNamespaceNames:
+          type: string
+        namespaceRentalFeeSinkAddress:
+          type: string
+        rootNamespaceRentalFeePerBlock:
+          type: string
+        childNamespaceRentalFee:
+          type: string
+    NetworkConfigurationDTO:
+      type: object
+      required:
+        - network
+        - chain
+        - plugins
+      properties:
+        network:
+          $ref: '#/components/schemas/NetworkPropertiesDTO'
+        chain:
+          $ref: '#/components/schemas/ChainPropertiesDTO'
+        plugins:
+          $ref: '#/components/schemas/PluginsPropertiesDTO'
+    NetworkPropertiesDTO:
+      type: object
+      required:
+        - identifier
+        - nodeEqualityStrategy
+        - nemesisSignerPublicKey
+        - generationHashSeed
+        - epochAdjustment
+      properties:
+        identifier:
+          type: string
+        nodeEqualityStrategy:
+          type: string
+        nemesisSignerPublicKey:
+          type: string
+        generationHashSeed:
+          type: string
+        epochAdjustment:
+          type: string
+    NetworkTypeDTO:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          description: The name of the network.
+        description:
+          type: string
+          description: A short text describing the network.
+    NodeHealthInfoDTO:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          allOf:
+            - $ref: '#/components/schemas/NodeStatusEnum'
+          description: Status message indicating what is the current condition of the API node.
+        message:
+          type: string
+          description: Additional information about the node health.
+    NodeInfoDTO:
+      type: object
+      required:
+        - version
+        - publicKey
+        - networkGenerationHashSeed
+        - roles
+        - port
+        - networkIdentifier
+        - friendlyName
+        - host
+      properties:
+        version:
+          type: integer
+          description: Version of the application.
+        publicKey:
+          allOf:
+            - $ref: '#/components/schemas/PublicKey'
+          description: Public key.
+        networkGenerationHashSeed:
+          type: string
+          description: Network generation hash seed.
+        roles:
+          type: integer
+          description: Roles of the node.
+        port:
+          type: integer
+          description: Port used for the communication.
+        networkIdentifier:
+          type: integer
+          description: Network identifier.
+        friendlyName:
+          type: string
+          description: Node friendly name.
+        host:
+          type: string
+          description: Node host.
+    NodeStatusEnum:
+      type: string
+      enum:
+        - up
+        - down
+      description: |-
+        Node status:
+        * up - Node is up.
+        * down - Node is down.
+    NodeTimeDTO:
+      type: object
+      required:
+        - communicationTimestamps
+      properties:
+        communicationTimestamps:
+          allOf:
+            - $ref: '#/components/schemas/CommunicationTimestampsDTO'
+          description: Public key.
+    Order:
+      type: string
+      enum:
+        - asc
+        - desc
+      description: |-
+        Indicates how to sort the results:
+        * ``asc`` - ascending
+        * ``desc`` - descending
+    Pagination:
+      type: object
+      required:
+        - pageNumber
+        - pageSize
+      properties:
+        pageNumber:
+          type: integer
+        pageSize:
+          type: integer
+    ParentPublicKeySignaturePair:
+      type: object
+      required:
+        - parentPublicKey
+        - signature
+      properties:
+        parentPublicKey:
+          type: string
+          description: Public key.
+        signature:
+          type: string
+          description: Signature.
+    PluginsPropertiesDTO:
+      type: object
+      required:
+        - accountlink
+        - aggregate
+        - lockhash
+        - locksecret
+        - metadata
+        - mosaic
+        - multisig
+        - namespaceConfig
+        - restrictionaccount
+        - restrictionmosaic
+        - transfer
+      properties:
+        accountlink:
+          $ref: '#/components/schemas/AccountLinkNetworkPropertiesDTO'
+        aggregate:
+          $ref: '#/components/schemas/AggregateNetworkPropertiesDTO'
+        lockhash:
+          $ref: '#/components/schemas/HashLockNetworkPropertiesDTO'
+        locksecret:
+          $ref: '#/components/schemas/SecretLockNetworkPropertiesDTO'
+        metadata:
+          $ref: '#/components/schemas/MetadataNetworkPropertiesDTO'
+        mosaic:
+          $ref: '#/components/schemas/MosaicNetworkPropertiesDTO'
+        multisig:
+          $ref: '#/components/schemas/MultisigNetworkPropertiesDTO'
+        namespaceConfig:
+          $ref: '#/components/schemas/NamespaceNetworkPropertiesDTO'
+        restrictionaccount:
+          $ref: '#/components/schemas/AccountRestrictionNetworkPropertiesDTO'
+        restrictionmosaic:
+          $ref: '#/components/schemas/MosaicRestrictionNetworkPropertiesDTO'
+        transfer:
+          $ref: '#/components/schemas/TransferNetworkPropertiesDTO'
+    PositionEnum:
+      type: string
+      enum:
+        - left
+        - right
+      description: Position relative to the proofHash being evaluated.
+    ProofGamma:
+      type: string
+      format: hex
+      description: 32-bytes VRF proof gamma.
+    ProofScalar:
+      type: string
+      format: hex
+      description: 32-bytes VRF proof scalar.
+    ProofVerificationHash:
+      type: string
+      format: hex
+      description: 16-bytes VRF proof verification hash.
+    PublicKey:
+      type: string
+      format: hex
+      description: Public key.
+    RentalFeesDTO:
+      type: object
+      required:
+        - effectiveRootNamespaceRentalFeePerBlock
+        - effectiveChildNamespaceRentalFee
+        - effectiveMosaicRentalFee
+      properties:
+        effectiveRootNamespaceRentalFeePerBlock:
+          type: string
+          description: Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
+        effectiveChildNamespaceRentalFee:
+          type: string
+          description: Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
+        effectiveMosaicRentalFee:
+          type: string
+          description: Absolute amount. An amount of 123456789 (absolute) for a mosaic with divisibility 6 means 123.456789 (relative).
+    SecretLockNetworkPropertiesDTO:
+      type: object
+      required:
+        - maxSecretLockDuration
+        - minProofSize
+        - maxProofSize
+      properties:
+        maxSecretLockDuration:
+          type: string
+        minProofSize:
+          type: string
+        maxProofSize:
+          type: string
+    ServerInfoDTO:
+      type: object
+      required:
+        - serverInfo
+      properties:
+        serverInfo:
+          type: string
+          description: REST component version.
+    Signature:
+      type: string
+      description: Entity's signature generated by the signer.
+    StateVersion:
+      type: integer
+      description: The version of the state
+    StorageInfoDTO:
+      type: object
+      required:
+        - numBlocks
+        - numTransactions
+        - numAccounts
+      properties:
+        numBlocks:
+          type: integer
+          description: Number of blocks stored.
+        numTransactions:
+          type: integer
+          description: Number of transactions stored.
+        numAccounts:
+          type: integer
+          description: Number of accounts created.
+    SupplementalPublicKeysDTO:
+      type: object
+      properties:
+        linked:
+          $ref: '#/components/schemas/AccountLinkPublicKeyDTO'
+        node:
+          $ref: '#/components/schemas/AccountLinkPublicKeyDTO'
+        vrf:
+          $ref: '#/components/schemas/AccountLinkPublicKeyDTO'
+        voting:
+          $ref: '#/components/schemas/AccountLinkVotingKeysDTO'
+    Timestamp:
+      type: string
+      description: |-
+        Number of milliseconds elapsed since the creation of the nemesis block.
+        This value can be converted to epoch time by adding the network's 'epochAdjustment'.
+    TransactionFeesDTO:
+      type: object
+      required:
+        - averageFeeMultiplier
+        - medianFeeMultiplier
+        - highestFeeMultiplier
+        - lowestFeeMultiplier
+      properties:
+        averageFeeMultiplier:
+          type: integer
+          description: Fee multiplier applied to transactions contained in block.
+        medianFeeMultiplier:
+          type: integer
+          description: Fee multiplier applied to transactions contained in block.
+        highestFeeMultiplier:
+          type: integer
+          description: Fee multiplier applied to transactions contained in block.
+        lowestFeeMultiplier:
+          type: integer
+          description: Fee multiplier applied to transactions contained in block.
+        minFeeMultiplier:
+          type: integer
+          description: Minimum fee multiplier on the network for transaction to be valid.
+    TransferNetworkPropertiesDTO:
+      type: object
+      required:
+        - maxMessageSize
+      properties:
+        maxMessageSize:
+          type: string
+    UInt32:
+      type: integer
+      format: int64
+      description: A number that allows uint 32 values.
+    UnlockedAccountDTO:
+      type: object
+      required:
+        - unlockedAccount
+      properties:
+        unlockedAccount:
+          type: array
+          items:
+            type: string
+          description: Array of unlocked account public keys.
+servers:
+  - url: http://tiger.catapult.ninja:3000
+    description: Symbol REST API
+    variables: {}
+  - url: http://lion.catapult.ninja:3000
+    description: Symbol REST API
+    variables: {}
+  - url: http://leopard.catapult.ninja:3000
+    description: Symbol REST API
+    variables: {}
+  - url: http://jaguar.catapult.ninja:3000
+    description: Symbol REST API
+    variables: {}
+  - url: http://cheetah.catapult.ninja:3000
+    description: Symbol REST API
+    variables: {}
+  - url: http://symbol.ninja:3000
+    description: Symbol REST API
+    variables: {}
